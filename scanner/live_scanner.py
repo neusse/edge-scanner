@@ -335,6 +335,21 @@ class LiveScanner:
             float(vwap) if vwap is not None else None,
         )
 
+    def seed_session_bar(self, bar: dict, spy_bar: Optional[dict] = None) -> bool:
+        """Replay one session bar without evaluating setups or emitting alerts.
+
+        Mid-session startup must seed both SymbolState and the shared
+        SymbolSeries. If only SymbolState is seeded, custom HOD/LOD triggers
+        begin at the first live bar and mistake ordinary moves for day highs or
+        lows even though the alert context holds the correct session levels.
+        """
+        state = self._states.get(str(bar.get("symbol") or ""))
+        if state is None:
+            return False
+        state.on_bar(bar, spy_bar)
+        self._advance_series(state, bar)
+        return True
+
     def _roll_session_if_new_day(self, bar: dict) -> bool:
         """Reset intraday state when the first bar of a new ET date arrives.
 

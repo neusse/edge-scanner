@@ -503,7 +503,7 @@ def main() -> None:
                 continue
             state._reset_intraday()  # clear any partial state from warmup
             for ts, row in sym_bars.iterrows():
-                state.on_bar({
+                scanner.seed_session_bar({
                     "symbol":    sym,
                     "timestamp": ts,
                     "open":      float(row["open"]),
@@ -538,8 +538,9 @@ def main() -> None:
                 if state is None:
                     continue
                 state._reset_intraday()
-                state.on_bar({"symbol": sym, "timestamp": stamp, "open": q["open"], "high": q["high"],
-                              "low": q["low"], "close": q["last"], "volume": q["volume"]})
+                scanner.seed_session_bar(
+                    {"symbol": sym, "timestamp": stamp, "open": q["open"], "high": q["high"],
+                     "low": q["low"], "close": q["last"], "volume": q["volume"]})
             if todo:
                 print(f"       {len(quotes)}/{len(todo)} more symbols caught up from quotes (volume and "
                       f"high/low so far; VWAP approximate until the next start before the open)", flush=True)

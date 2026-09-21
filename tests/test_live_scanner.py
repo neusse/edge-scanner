@@ -116,6 +116,34 @@ def test_warmup_prior_close_is_last_bar():
     assert scanner._states["AAPL"].prior_close == pytest.approx(expected_close)
 
 
+def test_seed_session_bar_keeps_state_and_custom_trigger_series_in_sync():
+    """A mid-session restart must not make a lower live bar look like a new HOD."""
+    from scanner.trigger_catalog import EvalCtx, evaluate
+
+    scanner, _, _ = _make_scanner()
+    _warmup(scanner)
+    state = scanner._states["AAPL"]
+    state._reset_intraday()
+
+    seeded = _bar("AAPL", 100.0, "2024-01-02 09:30")
+    seeded["high"], seeded["low"] = 105.0, 95.0
+    scanner.seed_session_bar(seeded)
+
+    assert state.high_of_day == seeded["high"]
+    assert state.low_of_day == seeded["low"]
+    assert scanner.series("AAPL").day_high == seeded["high"]
+    assert scanner.series("AAPL").day_low == seeded["low"]
+
+    inside = _bar("AAPL", 100.0, "2024-01-02 09:31")
+    inside["high"], inside["low"] = 104.0, 96.0
+    state.on_bar(inside)
+    session = scanner._advance_series(state, inside)
+    ctx = EvalCtx(state=state, series=scanner.series("AAPL"), bar=inside,
+                  et_min=9 * 60 + 31, session=session, external=set())
+    assert evaluate("hod", ctx, "high", {}) is None
+    assert evaluate("hod", ctx, "low", {}) is None
+
+
 # ── SPY bar routing ───────────────────────────────────────────────────────────
 
 def test_spy_bar_updates_latest_spy_bar():
