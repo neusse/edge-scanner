@@ -217,7 +217,7 @@ while dragging to turn off snapping.
 | **Chart** | Intraday and daily candles with extended hours, VWAP, EMAs, daily SMAs, prior-day and premarket levels |
 | **Rankings** | Ranked lists: RVOL leaders, gainers and losers (from the close or the open), 5-minute movers, premarket gainers, losers and volume, and a new high / low of day stream |
 | **News** | Market-wide news, or news for the linked symbol |
-| **Stock Info** | Live per-symbol state plus fundamentals |
+| **Stock Info** | Live per-symbol state plus company fundamentals. The Schwab feed adds the full Instruments fundamental record, grouped into valuation, profitability, growth, financial health, dividends and trading statistics |
 | **Watchlist** | Editable symbol lists with live columns |
 | **Clock** | Eastern time, session phase, market regime, SPY and feed health |
 | **Setup check** | For one symbol, what every setup did over the last few minutes and which condition passed or failed. Use it to answer "why did (or didn't) this alert fire?" |
@@ -568,7 +568,9 @@ pass rate next to each setting shows how restrictive it is today. Changes apply 
 machine. Use a smaller universe CSV (see `build_universe.py` in section 7).
 
 **The Stock Info window has no fundamentals.** They load in the background after warmup and can take a few
-minutes. They are skipped when you run with `--no-fundamentals`.
+minutes. They are skipped when you run with `--no-fundamentals`. With `DATA_PROVIDER=schwab`, the scanner
+loads Schwab Instruments fundamentals in batched requests and uses Yahoo Finance for company profile fields
+such as sector, industry, website, summary and earnings date. Other feeds use Yahoo Finance alone.
 
 ---
 

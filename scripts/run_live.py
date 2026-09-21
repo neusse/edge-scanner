@@ -52,7 +52,6 @@ from scanner.custom_setups import CustomEvaluator
 from scanner.fundamentals import get_cache as get_fundamentals_cache
 from scanner.profiles import ProfileEngine
 from scanner.events import EventBuffer, make_hodlod_hook   # Dashboard V2 HOD/LOD ticker
-from scanner.fundamentals import start_background_prefetch  # Dashboard V2 Stock Info
 from scanner import plugins
 from scanner.alert_sink import AlertSink
 from scanner.universe import load_universe
@@ -340,7 +339,7 @@ def main() -> None:
     parser.add_argument("--feed", choices=FEEDS, default=_provider if _provider in FEEDS else "alpaca",
                         help="Market data provider (default: DATA_PROVIDER in .env, else alpaca)")
     parser.add_argument("--no-fundamentals", action="store_true",
-                        help="Skip the Dashboard V2 yfinance fundamentals prefetch (background "
+                        help="Skip the Dashboard V2 fundamentals prefetch (background "
                              "thread after warmup; never blocks scanning).")
     parser.add_argument("--port", type=int, default=7777,
                         help="Port for the dashboard, API and unified feed (default 7777). A second "
@@ -571,8 +570,16 @@ def main() -> None:
     import threading
     import uvicorn
     if not args.no_fundamentals:
-        start_background_prefetch(list(scanner._states.keys()))
-        print("       Dashboard V2: fundamentals prefetch running in background (--no-fundamentals to skip)", flush=True)
+        fundamentals_cache = get_fundamentals_cache()
+        provider_fetch = getattr(feed, "get_fundamentals", None)
+        fundamentals_cache.configure_provider(
+            provider_fetch if callable(provider_fetch) else None,
+            args.feed if callable(provider_fetch) else None,
+        )
+        fundamentals_cache.start_background_prefetch(list(scanner._states.keys()))
+        source = "Schwab Instruments + Yahoo profile" if callable(provider_fetch) else "Yahoo Finance"
+        print(f"       Dashboard V2: {source} fundamentals prefetch running in background "
+              "(--no-fundamentals to skip)", flush=True)
     _api_app = create_app(app_state)
     print(f"       Dashboard V2: http://localhost:{args.port}/v2  (build: npm --prefix dashboard-v2 run build)", flush=True)
     _server_cfg = uvicorn.Config(_api_app, host=args.host, port=args.port, log_level="warning")

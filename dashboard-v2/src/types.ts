@@ -281,10 +281,13 @@ export interface StockInfo {
 
 export interface Fundamentals {
   symbol: string; ok: boolean; pending?: boolean; fetched_at?: string; error?: string
+  provider?: string
   name?: string | null; sector?: string | null; industry?: string | null
   market_cap?: number | null; shares_outstanding?: number | null; float_shares?: number | null
   short_pct_float?: number | null; short_ratio?: number | null; next_earnings?: string | null
   website?: string | null; summary?: string | null
+  schwab_instrument?: Record<string, string | number | null>
+  schwab_fundamentals?: Record<string, string | number | null>
 }
 
 export interface NewsItem {

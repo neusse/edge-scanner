@@ -42,9 +42,10 @@ no login because nothing is exposed to the network.
   gitignored.
 - **Goes out, to your own accounts:** market data requests to Alpaca or Charles Schwab, signed with
   your keys. They see the symbols you scan, as any market-data client would.
-- **Goes out, unauthenticated:** company fundamentals from Yahoo Finance, and per-symbol news
-  headlines from Yahoo Finance and Nasdaq RSS. Those services see the symbol being requested and
-  your IP. Turn the news ones off with `NEWS_RSS_SOURCES=` in `.env`.
+- **Goes out, unauthenticated:** company profile fields from Yahoo Finance, and per-symbol news
+  headlines from Yahoo Finance and Nasdaq RSS. When Schwab is the data provider, richer company
+  fundamentals come from the authenticated Schwab Instruments endpoint. Those services see the
+  symbol being requested and your IP. Turn the news ones off with `NEWS_RSS_SOURCES=` in `.env`.
 - **Never collected:** no analytics, no crash reports, no usage data. The project has no server.
 
 ## What's inside

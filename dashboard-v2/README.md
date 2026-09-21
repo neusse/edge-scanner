@@ -40,7 +40,7 @@ Other scripts: `npm run lint` (ESLint), `npm run preview` (serve the built bundl
 | Chart | `/api/bars` | intraday and daily timeframes, extended hours, VWAP, EMAs, daily SMAs, prior-day and premarket levels |
 | Rankings | `/api/v2/toplists`, `/api/premarket`, `/api/v2/events` | RVOL leaders, gainers and losers, 5-min movers, premarket lists, new HOD / LOD stream |
 | News | `/api/v2/news` | market-wide or following the linked symbol |
-| Stock Info | `/api/v2/state`, `/api/v2/fundamentals` | live per-symbol state plus fundamentals |
+| Stock Info | `/api/v2/state`, `/api/v2/fundamentals` | live state plus Yahoo profile data and, on the Schwab feed, the full Instruments fundamental record |
 | Watchlist | `/api/v2/watchlists`, `/api/v2/snapshot` | editable lists with live columns |
 | Clock | `/api/v2/clock` | ET clock, session phase, market regime, SPY, feed health |
 | Setup check | `/api/v2/check/{symbol}` | what every setup did on one symbol in the last few minutes, and why |
